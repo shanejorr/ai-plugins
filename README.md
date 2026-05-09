@@ -12,10 +12,10 @@ A Claude Code plugin marketplace.
 
 | Name | Description |
 |------|-------------|
-| example-plugin | An example plugin |
+| reading-pipeline | Summarize research papers, convert to EPUB/KEPUB, and sync to Kobo or reMarkable via Google Drive |
 
 ## Usage
 
 ```
-/plugin install example-plugin@claude-plugins
+/plugin install <plugin-name>@claude-plugins
 ```

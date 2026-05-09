@@ -1,3 +1,14 @@
 .DS_Store
 *.log
 node_modules/
+__pycache__/
+*.pyc
+
+# send-to-reader: personal Drive folder IDs (commit only the example template)
+plugins/reading-pipeline/skills/send-to-reader/config/folders.json
+
+# send-to-reader: ignore EVERYTHING under credentials/ (OAuth secrets, tokens,
+# any future cache files), except the docs that explain how to set it up.
+plugins/reading-pipeline/skills/send-to-reader/credentials/*
+!plugins/reading-pipeline/skills/send-to-reader/credentials/README.md
+!plugins/reading-pipeline/skills/send-to-reader/credentials/.gitkeep
