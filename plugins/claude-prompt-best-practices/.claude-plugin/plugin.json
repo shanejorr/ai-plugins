@@ -1,5 +1,5 @@
 {
   "name": "claude-prompt-best-practices",
   "description": "Reference guide for writing effective prompts for Claude. Bundles the official Anthropic prompt engineering documentation as a skill.",
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

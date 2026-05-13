@@ -11,19 +11,19 @@
       "name": "reading-pipeline",
       "source": "./plugins/reading-pipeline",
       "description": "Summarize research papers, convert to EPUB/KEPUB, and sync to Kobo or reMarkable via Google Drive.",
-      "version": "0.1.0"
+      "version": "0.2.0"
     },
     {
       "name": "english-tutoring",
       "source": "./plugins/english-tutoring",
       "description": "Lesson generation and progress tracking for Shane's at-home English tutoring of Camillo and Luciana. Bundles the create-lesson and confirm-lesson skills.",
-      "version": "0.2.0"
+      "version": "0.3.0"
     },
     {
       "name": "claude-prompt-best-practices",
       "source": "./plugins/claude-prompt-best-practices",
       "description": "Reference guide for writing effective prompts for Claude. Bundles the official Anthropic prompt engineering documentation as a skill.",
-      "version": "0.1.0"
+      "version": "0.2.0"
     },
     {
       "name": "ui-style",

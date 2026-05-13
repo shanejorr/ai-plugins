@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(open /Users/shaneorr/repos/personal/claude-plugins)",
+      "Read(//Users/shaneorr/.claude/plugins/**)"
+    ]
+  }
+}
