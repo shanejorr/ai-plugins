@@ -1,0 +1,9 @@
+{
+  "name": "english-tutoring",
+  "version": "0.2.0",
+  "description": "Lesson generation and progress tracking for Shane's at-home English tutoring of Camillo and Luciana. Bundles the create-lesson and confirm-lesson skills.",
+  "author": {
+    "name": "Shane Orr"
+  },
+  "keywords": ["education", "english", "tutoring", "esl", "cefr"]
+}

@@ -13,6 +13,7 @@ A Claude Code plugin marketplace.
 | Name | Description |
 |------|-------------|
 | reading-pipeline | Summarize research papers, convert to EPUB/KEPUB, and sync to Kobo or reMarkable via Google Drive |
+| english-tutoring | Lesson generation and progress tracking for Shane's at-home English tutoring of Camillo and Luciana |
 
 ## Usage
 
