@@ -14,10 +14,8 @@ The script looks for the file in this order:
 The user-config path is preferred because the in-tree copy is wiped
 whenever the plugin is reinstalled or upgraded.
 
-OAuth credentials and the cached refresh token live in a shared, out-of-tree
-directory: `~/.config/gdrive-oauth/`. The same credentials and token are used
-by the `english-tutoring` plugin's `create-lesson` skill, so OAuth consent
-only happens once.
+OAuth credentials and the cached refresh token live in an out-of-tree
+directory: `~/.config/gdrive-oauth/`.
 
 Usage:
     python upload_to_gdrive.py <file_path> --device kobo

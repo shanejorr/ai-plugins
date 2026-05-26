@@ -6,6 +6,3 @@ __pycache__/
 
 # send-to-reader: personal Drive folder IDs (commit only the example template)
 plugins/reading-pipeline/skills/send-to-reader/config/folders.json
-
-# create-lesson: personal Drive folder IDs (commit only the example template)
-plugins/english-tutoring/skills/create-lesson/config/folders.json

@@ -13,9 +13,9 @@ A Claude Code plugin marketplace.
 | Name | Description |
 |------|-------------|
 | reading-pipeline | Summarize research papers, convert to EPUB/KEPUB, and sync to Kobo or reMarkable via Google Drive |
-| english-tutoring | Lesson generation and progress tracking for Shane's at-home English tutoring of Camillo and Luciana |
 | claude-prompt-best-practices | Reference guide for writing effective prompts for Claude (official Anthropic docs as a skill) |
 | ui-style | Shane's house UI style guide: editorial civic-warm aesthetic for parent/civic-facing web products |
+| english-survival-lessons | Generate a 20-day functional survival English course (master itinerary + daily teacher plans, kid-facing readings/notes, audio script, three video scripts) |
 
 ## Usage
 

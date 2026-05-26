@@ -9,9 +9,6 @@ They now live in a **shared out-of-tree location** at:
     gdrive_token.pickle        # Cached refresh token (auto-created on first run)
 ```
 
-The same files are used by the `english-tutoring` plugin's `create-lesson`
-skill, so OAuth consent only has to happen once.
-
 ## One-time setup
 
 1. `mkdir -p ~/.config/gdrive-oauth && chmod 700 ~/.config/gdrive-oauth`
@@ -19,10 +16,7 @@ skill, so OAuth consent only has to happen once.
    or pick an existing one.
 3. In **APIs & Services → Library**, enable the **Google Drive API**.
 4. In **APIs & Services → OAuth consent screen**, make sure the scope
-   `https://www.googleapis.com/auth/drive` is included. (The broader `drive`
-   scope is required so the `english-tutoring` skill can write into
-   pre-existing parent folders. `send-to-reader` only creates new files, so
-   the broader scope changes nothing for this skill.)
+   `https://www.googleapis.com/auth/drive.file` is included.
 5. In **APIs & Services → Credentials**, click **Create Credentials → OAuth
    client ID**. Pick application type **Desktop app**. Name it something
    like "Claude personal Drive client".
@@ -54,6 +48,5 @@ action.
 
 ## Scopes
 
-The scripts request `https://www.googleapis.com/auth/drive`. This is the
-broad Drive scope, required so the `english-tutoring` skill can write into
-pre-existing parent folders that the OAuth app did not create itself.
+The scripts request `https://www.googleapis.com/auth/drive.file`, which
+only grants access to files the app itself creates.

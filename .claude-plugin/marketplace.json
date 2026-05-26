@@ -13,13 +13,7 @@
       "description": "Summarize research papers, convert to EPUB/KEPUB, and sync to Kobo or reMarkable via Google Drive.",
       "version": "0.4.2"
     },
-    {
-      "name": "english-tutoring",
-      "source": "./plugins/english-tutoring",
-      "description": "Lesson generation and progress tracking for Shane's at-home English tutoring of Camillo and Luciana. Bundles the create-lesson and confirm-lesson skills.",
-      "version": "0.5.4"
-    },
-    {
+{
       "name": "claude-prompt-best-practices",
       "source": "./plugins/claude-prompt-best-practices",
       "description": "Reference guide for writing effective prompts for Claude. Bundles the official Anthropic prompt engineering documentation as a skill.",
@@ -29,6 +23,12 @@
       "name": "ui-style",
       "source": "./plugins/ui-style",
       "description": "Shane's house UI style guide: editorial civic-warm aesthetic for parent/civic-facing web products. User-invoked skill.",
+      "version": "0.1.0"
+    },
+    {
+      "name": "english-survival-lessons",
+      "source": "./plugins/english-survival-lessons",
+      "description": "Generate a 20-day functional survival English course — produces a master itinerary and per-day teacher plans, kid-facing readings and notes, audio scripts, and three video scripts.",
       "version": "0.1.0"
     }
   ]
