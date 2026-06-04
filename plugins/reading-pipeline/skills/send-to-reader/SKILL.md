@@ -77,23 +77,21 @@ python <skill-path>/scripts/upload_to_gdrive.py <file_path> --device <kobo|remar
 ```
 
 The script:
-- Reads the folder ID for the chosen device from `<skill-dir>/config/folders.json`.
-- Reads OAuth client credentials from `<skill-dir>/credentials/gdrive_credentials.json`.
-- Caches the refresh token at `<skill-dir>/credentials/gdrive_token.pickle`.
+- Reads the folder ID for the chosen device from `~/.config/send-to-reader/folders.json` (falling back to `<skill-dir>/config/folders.json`).
+- Reads OAuth client credentials from `~/.config/gdrive-oauth/gdrive_credentials.json`.
+- Caches the refresh token at `~/.config/gdrive-oauth/gdrive_token.pickle`.
 
 After the first successful run, subsequent uploads are non-interactive.
 
 ## Step 5: First-Time Setup
 
-If `config/folders.json` or `credentials/gdrive_credentials.json` is missing, the script prints a targeted error pointing to the example template. Walk the user through this once:
+If credentials or folders config are missing, the script prints a targeted error. Walk the user through this once:
 
 1. Open https://console.cloud.google.com/, create or pick a project, and enable the Google Drive API.
 2. Create OAuth 2.0 credentials of type "Desktop app". Download the JSON.
-3. Save that JSON as `<skill-dir>/credentials/gdrive_credentials.json`.
-4. Copy `<skill-dir>/config/folders.example.json` to `<skill-dir>/config/folders.json` and fill in the folder IDs. To get a folder ID, open the folder in a browser and copy the last segment of the URL (`drive.google.com/drive/folders/<THIS_PART>`).
-5. On the first run, a browser opens for OAuth consent. The token is then cached for reuse.
-
-Full setup steps also live in `<skill-dir>/credentials/README.md`.
+3. Save that JSON as `~/.config/gdrive-oauth/gdrive_credentials.json` (create the directory with `mkdir -p ~/.config/gdrive-oauth && chmod 700 ~/.config/gdrive-oauth`).
+4. Copy `<skill-dir>/config/folders.example.json` to `~/.config/send-to-reader/folders.json` and fill in the folder IDs. To get a folder ID, open the folder in a browser and copy the last segment of the URL (`drive.google.com/drive/folders/<THIS_PART>`).
+5. On the first run, a browser opens for OAuth consent. The token is then cached at `~/.config/gdrive-oauth/gdrive_token.pickle` for reuse.
 
 ## Error Handling
 
@@ -103,8 +101,8 @@ The script surfaces specific, actionable messages:
 - **Device not in config** → lists known devices and asks the user to add the missing one.
 - **Folder ID is the placeholder string** → tells the user to fill in the real ID.
 - **OAuth credentials JSON missing** → points to the setup instructions.
-- **Drive returns 404 on the parent folder** → "folder `<id>` (device: `<device>`) not found — edit `config/folders.json` or check OAuth account access."
-- **Drive returns 403** → "permission denied — the OAuth account may not have write access; re-share the folder or update the config."
+- **Drive returns 404 on the parent folder** → "folder `<id>` (device: `<device>`) not found — edit `~/.config/send-to-reader/folders.json` or check OAuth account access."
+- **Drive returns 403** → "permission denied — the OAuth account may not have write access; re-share the folder or update `~/.config/send-to-reader/folders.json`."
 
 If you (the model) see one of these messages, relay the exact remediation to the user — don't just say "upload failed."
 

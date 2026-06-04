@@ -11,7 +11,7 @@
       "name": "reading-pipeline",
       "source": "./plugins/reading-pipeline",
       "description": "Summarize research papers, convert to EPUB/KEPUB, and sync to Kobo or reMarkable via Google Drive.",
-      "version": "0.4.2"
+      "version": "0.4.3"
     },
 {
       "name": "claude-prompt-best-practices",
