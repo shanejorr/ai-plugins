@@ -2,7 +2,7 @@
 name: convert-to-epub
 description: "Convert a Markdown file, PDF, or plain text into an EPUB or KEPUB e-book file. Use this skill whenever the user wants to turn a document into an e-reader-friendly format — phrases like 'make this into an epub', 'create a kepub', 'convert to epub', 'turn this PDF into a book', 'make this readable on my Kindle/Kobo', or any time the user mentions an .epub or .kepub.epub output. Also trigger when a user has just produced a Markdown summary (e.g., from summarize-research) and wants to read it on an e-reader. Accepts .md, .pdf, or .txt input. Default output format is EPUB (.epub); KEPUB (.kepub.epub) is available when the user is targeting a Kobo and wants reading stats / Kobo-specific typography."
 user-invocable: true
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Convert to EPUB Skill

@@ -1,0 +1,20 @@
+{
+  "name": "shanejorr-plugins",
+  "interface": {
+    "displayName": "Shane Orr Plugins"
+  },
+  "plugins": [
+    {
+      "name": "reading-pipeline",
+      "source": {
+        "source": "local",
+        "path": "./plugins/reading-pipeline"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_USE"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

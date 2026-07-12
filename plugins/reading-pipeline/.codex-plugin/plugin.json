@@ -1,0 +1,27 @@
+{
+  "name": "reading-pipeline",
+  "version": "0.4.3",
+  "description": "Summarize research papers, convert documents to EPUB or KEPUB, and send them to a Kobo or reMarkable via Google Drive.",
+  "author": {
+    "name": "Shane Orr",
+    "url": "https://github.com/shanejorr"
+  },
+  "repository": "https://github.com/shanejorr/claude-plugins",
+  "keywords": ["research", "epub", "kepub", "kobo", "remarkable"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Reading Pipeline",
+    "shortDescription": "Summarize, convert, and send reading material",
+    "longDescription": "Summarize academic papers, convert documents and conversation content to EPUB or KEPUB, and upload files to Google Drive folders that sync with Kobo and reMarkable devices.",
+    "developerName": "Shane Orr",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write"],
+    "websiteURL": "https://github.com/shanejorr/claude-plugins",
+    "defaultPrompt": [
+      "Summarize this research paper for a general audience.",
+      "Convert this document to EPUB.",
+      "Send this file to my e-reader."
+    ],
+    "brandColor": "#315C67"
+  }
+}

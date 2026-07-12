@@ -2,7 +2,7 @@
 name: summarize-research
 description: "Summarize an academic research paper for an intelligent non-specialist audience and save the summary as a Markdown or PDF file. Accepts the paper as a PDF, plain text, or a URL (arXiv, journal, blog). Use this skill whenever the user asks for a summary, explanation, breakdown, or review of a research paper, academic article, journal article, preprint, or scientific study. Trigger phrases include 'summarize this paper', 'explain this paper', 'what does this paper say', 'break down this study', 'summarize this article', or any time the user supplies a paper (PDF/URL/text) and wants it explained. Do NOT use for summarizing non-academic documents like reports, whitepapers, or news articles."
 user-invocable: true
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Summarize Research Skill
@@ -21,7 +21,7 @@ Run `pdfinfo` and `pdftotext` to extract the text. If figures or tables matter (
 
 ### URL input
 
-Use the `WebFetch` tool to retrieve the page. If the URL clearly points to a PDF (ends in `.pdf`, or the response content-type is `application/pdf`), download it with `curl -L -o /tmp/paper.pdf <URL>` and then extract as in the PDF case. arXiv abstract pages (`arxiv.org/abs/...`) also have a direct PDF link at `arxiv.org/pdf/...` — prefer that.
+Use an available web-fetching or browser tool to retrieve the page. If the URL clearly points to a PDF (ends in `.pdf`, or the response content-type is `application/pdf`), download it with `curl -L -o /tmp/paper.pdf <URL>` and then extract as in the PDF case. arXiv abstract pages (`arxiv.org/abs/...`) also have a direct PDF link at `arxiv.org/pdf/...` — prefer that.
 
 ### Plain-text input
 
@@ -129,7 +129,7 @@ Save to the user's current working directory by default. If the user specifies a
 
 ### If output is Markdown
 
-Use the `Write` tool to save the file directly.
+Use the available file-editing tool to save the file directly.
 
 ### If output is PDF
 

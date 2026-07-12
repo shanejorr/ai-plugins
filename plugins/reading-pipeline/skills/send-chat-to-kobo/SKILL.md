@@ -1,15 +1,15 @@
 ---
 name: send-chat-to-kobo
-description: "Send a Claude chat response — or a user-selected section of one — to Shane's Kobo Color as a KEPUB e-book. Use this skill whenever the user wants to read part of the current conversation on their Kobo. Trigger phrases include 'send [X] to my Kobo', 'send your last response to my Kobo', 'send the section about [X] to my Kobo', 'put this on my Kobo', 'I want to read this on my Kobo'. Orchestrates convert-to-epub and send-to-reader; do not invoke those manually when this skill applies."
+description: "Send an assistant response — or a user-selected section of the current conversation — to Shane's Kobo Color as a KEPUB e-book. Use this skill whenever the user wants to read part of the current conversation on their Kobo. Trigger phrases include 'send [X] to my Kobo', 'send your last response to my Kobo', 'send the section about [X] to my Kobo', 'put this on my Kobo', 'I want to read this on my Kobo'. Orchestrates convert-to-epub and send-to-reader; do not invoke those manually when this skill applies."
 user-invocable: true
-disable-model-invocation: true
+disable-model-invocation: false
 ---
 
 # Send Chat to Kobo Skill
 
 ## Purpose
 
-Turn a selected piece of the current Claude conversation — a full response, a specific section, or a multi-turn span — into a `.kepub.epub` e-book and upload it to the user's Kobo Color via the existing reading-pipeline skills. The end result: the content appears on the Kobo on its next sync, formatted as a proper book with Kobo reading stats and typography.
+Turn a selected piece of the current conversation — a full response, a specific section, or a multi-turn span — into a `.kepub.epub` e-book and upload it to the user's Kobo Color via the existing reading-pipeline skills. The end result: the content appears on the Kobo on its next sync, formatted as a proper book with Kobo reading stats and typography.
 
 This skill is pure orchestration. It delegates conversion to `convert-to-epub` and upload to `send-to-reader`. Do not duplicate their logic here.
 
@@ -33,7 +33,7 @@ Save to `/tmp/<snake_case_title>.md`:
 - **Blank line, then body.**
 - **Preserve formatting** already present in the response: headings (`##`, `###`), lists, code blocks, tables, blockquotes. Do not rewrite or summarize — the user picked this content because they want to read it as-is.
 
-Use the `Write` tool for this step.
+Use the available file-editing tool for this step.
 
 ## Step 3: Convert to KEPUB
 
