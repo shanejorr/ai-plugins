@@ -6,7 +6,7 @@
     "name": "Shane Orr",
     "url": "https://github.com/shanejorr"
   },
-  "repository": "https://github.com/shanejorr/claude-plugins",
+  "repository": "https://github.com/shanejorr/ai-plugins",
   "keywords": ["research", "epub", "kepub", "kobo", "remarkable"],
   "skills": "./skills/",
   "interface": {
@@ -16,7 +16,7 @@
     "developerName": "Shane Orr",
     "category": "Productivity",
     "capabilities": ["Read", "Write"],
-    "websiteURL": "https://github.com/shanejorr/claude-plugins",
+    "websiteURL": "https://github.com/shanejorr/ai-plugins",
     "defaultPrompt": [
       "Summarize this research paper for a general audience.",
       "Convert this document to EPUB.",

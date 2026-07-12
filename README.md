@@ -5,7 +5,7 @@ A personal plugin marketplace for Claude Code. The `reading-pipeline` plugin is 
 ## Install for Claude Code
 
 ```
-/plugin marketplace add shanejorr/claude-plugins
+/plugin marketplace add shanejorr/ai-plugins
 ```
 
 Then install any Claude plugin from the marketplace:
@@ -19,7 +19,7 @@ Then install any Claude plugin from the marketplace:
 Register the GitHub marketplace and install the plugin:
 
 ```bash
-codex plugin marketplace add shanejorr/claude-plugins
+codex plugin marketplace add shanejorr/ai-plugins
 codex plugin add reading-pipeline@shanejorr-plugins
 ```
 

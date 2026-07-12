@@ -1,4 +1,4 @@
-# claude-plugins
+# ai-plugins
 
 A personal Claude Code plugin marketplace hosted on GitHub. Plugins here are built for Shane's own productivity and automation needs, but the marketplace is public so others can install them too. `reading-pipeline` is additionally packaged for ChatGPT Work and Codex.
 
@@ -29,14 +29,14 @@ A personal Claude Code plugin marketplace hosted on GitHub. Plugins here are bui
 ### Claude Code
 
 ```
-/plugin marketplace add shanejorr/claude-plugins
+/plugin marketplace add shanejorr/ai-plugins
 /plugin install <plugin-name>@shanejorr-plugins
 ```
 
 ### ChatGPT Work and Codex (`reading-pipeline` only)
 
 ```bash
-codex plugin marketplace add shanejorr/claude-plugins
+codex plugin marketplace add shanejorr/ai-plugins
 codex plugin add reading-pipeline@shanejorr-plugins
 ```
 
