@@ -1,0 +1,4 @@
+interface:
+  display_name: "Research Topic"
+  short_description: "Create a deep, course-level research report"
+  default_prompt: "Use $research-topic to research this topic and create a thorough, citation-rich report."
