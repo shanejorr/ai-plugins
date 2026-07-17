@@ -30,6 +30,12 @@
       "source": "./plugins/english-survival-lessons",
       "description": "Generate a 20-day functional survival English course — produces a master itinerary and per-day teacher plans, kid-facing readings and notes, audio scripts, and three video scripts.",
       "version": "0.1.0"
+    },
+    {
+      "name": "job-search",
+      "source": "./plugins/job-search",
+      "description": "Job-search toolkit: search the web for roles matching your preferences, capture job postings to markdown, scrape LinkedIn profiles, and get resume-tailoring recommendations.",
+      "version": "0.1.0"
     }
   ]
 }

@@ -35,3 +35,4 @@ Only `reading-pipeline` is currently published in the Codex marketplace. The oth
 | claude-prompt-best-practices | Claude | Reference guide for writing effective prompts for Claude (official Anthropic docs as a skill) |
 | ui-style | Claude | Shane's house UI style guide: editorial civic-warm aesthetic for parent/civic-facing web products |
 | english-survival-lessons | Claude | Generate a 20-day functional survival English course (master itinerary + daily teacher plans, kid-facing readings/notes, audio script, three video scripts) |
+| job-search | Claude | Job-search toolkit: find roles matching your preferences, capture postings to markdown, scrape LinkedIn profiles, and get resume-tailoring recommendations |
