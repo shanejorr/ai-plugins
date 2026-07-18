@@ -1,8 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(open /Users/shaneorr/repos/personal/claude-plugins)",
-      "Read(//Users/shaneorr/.claude/plugins/**)"
+      "Bash(open /Users/shaneorr/projects/ai-plugins)",
+      "Read(//Users/shaneorr/.claude/plugins/**)",
+      "Bash(python /Users/shaneorr/.claude/plugins/cache/shanejorr-plugins/reading-pipeline/**)"
     ]
   }
 }

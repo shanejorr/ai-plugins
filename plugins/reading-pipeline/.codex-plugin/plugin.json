@@ -1,6 +1,6 @@
 {
   "name": "reading-pipeline",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Research topics, summarize papers, convert documents to EPUB or KEPUB, and send them to a Kobo or reMarkable via Google Drive.",
   "author": {
     "name": "Shane Orr",

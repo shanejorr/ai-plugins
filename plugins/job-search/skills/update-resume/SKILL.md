@@ -1,6 +1,11 @@
 ---
 name: update-resume
-description: Recommend how to tailor a resume to a specific job description. Use when the user asks to update, tailor, or adapt their resume for a job. Takes arguments: a job description markdown file, a resume markdown file (both required), and optionally additional markdown files with career information (e.g. a LinkedIn summary). Prints recommendations; does not edit the resume.
+description: >-
+  Recommend how to tailor a resume to a specific job description. Use when the
+  user asks to update, tailor, or adapt their resume for a job. Takes a job
+  description Markdown file, a resume Markdown file, and optionally additional
+  career-information files. Prints recommendations and does not edit the
+  resume.
 ---
 
 # Update resume

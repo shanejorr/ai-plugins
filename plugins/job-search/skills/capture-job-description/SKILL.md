@@ -1,6 +1,10 @@
 ---
 name: capture-job-description
-description: Capture a job posting from a URL into a structured markdown file in job_descriptions/. Use when given a job posting web address and asked to save, capture, or record the job description. Takes one argument: the job posting URL.
+description: >-
+  Capture a job posting from a URL into a structured markdown file in
+  job_descriptions/. Use when given a job posting web address and asked to
+  save, capture, or record the job description. Takes one argument: the job
+  posting URL.
 ---
 
 # Capture job description
@@ -13,9 +17,9 @@ A single job posting URL (passed as the argument). If no URL was provided, ask t
 
 ## Steps
 
-1. **Fetch the page.** Use a web fetch tool on the URL (e.g. Tavily `tavily_extract` or `WebFetch`).
+1. **Fetch the page.** Use an available web-fetching or page-extraction tool on the URL.
    - If the fetch fails or is blocked, tell the user and stop — do not try to retrieve the content another way.
-   - If the fetch succeeds but returns only a page shell, a loading spinner, an "enable JavaScript" message, or otherwise no real job content, the page is client-rendered. Switch to browser tools (e.g. Claude in Chrome: `navigate` then `get_page_text`) to read the rendered page.
+   - If the fetch succeeds but returns only a page shell, a loading spinner, an "enable JavaScript" message, or otherwise no real job content, the page is client-rendered. Switch to an available browser-control tool to read the rendered page.
 
 2. **Pick a filename.** Derive a short, lowercase, hyphenated slug from the organization and/or role (e.g. `project-evident.md`, `acme-data-analyst.md`). Save to `job_descriptions/<slug>.md`. If a file with that name already exists, ask the user before overwriting.
 

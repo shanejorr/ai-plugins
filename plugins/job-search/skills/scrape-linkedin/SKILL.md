@@ -1,6 +1,10 @@
 ---
 name: scrape-linkedin
-description: Scrape a LinkedIn profile page by username and save a structured markdown summary to linkedin_summary.md in the project root. Use whenever the user asks to scrape, capture, pull, refresh, or summarize a LinkedIn profile or LinkedIn page — e.g. "/scrape-linkedin some-username", "scrape my linkedin", "update my linkedin summary". Takes one argument: the LinkedIn username (the slug after linkedin.com/in/).
+description: >-
+  Scrape a LinkedIn profile page by username and save a structured Markdown
+  summary to linkedin_summary.md in the project root. Use whenever the user
+  asks to scrape, capture, pull, refresh, or summarize a LinkedIn profile or
+  page. Takes one argument: the LinkedIn username or profile URL.
 ---
 
 # Scrape LinkedIn profile
@@ -23,22 +27,25 @@ LinkedIn aggressively blocks anonymous scraping: unauthenticated requests usuall
 
 Try a direct fetch of the URL first — it's nearly free and non-intrusive, though it usually hits the authwall:
 
-- Prefer the Tavily tools if available (`tavily_extract` on the profile URL, with `extract_depth: "advanced"`).
-- Otherwise use the built-in `WebFetch` tool.
+- Prefer a page-extraction tool capable of advanced or full-page extraction.
+- Otherwise use any available web-fetching tool.
 
 Don't retry variations if this fails — one clean attempt, then move on.
 
-### 2. Chrome MCP (user's real browser — most likely to succeed)
+### 2. User's logged-in Chrome browser (most likely to succeed)
 
-The user's own Chrome is typically **logged in to LinkedIn**, which bypasses the authwall entirely. Use the Claude in Chrome tools (`mcp__claude-in-chrome__*`; load them via ToolSearch if deferred):
+The user's own Chrome may already be **logged in to LinkedIn**, which bypasses
+the authwall entirely. If a browser connector or computer-control capability
+can use the user's existing Chrome session:
 
-1. `navigate` to the profile URL, wait a moment for it to render.
-2. `get_page_text` to read the content.
+1. Navigate to the profile URL and wait for it to render.
+2. Read the rendered page text.
 3. Profile pages truncate long sections. If Experience/About entries end with "…see more", scroll down and expand them (or visit `https://www.linkedin.com/in/<username>/details/experience/` for the full experience list) and read again.
 
 ### 3. Other browser automation for the user's real browser
 
-If the Claude in Chrome extension isn't connected but another tool can drive the user's logged-in browser (e.g. an AppleScript-based Chrome controller), use it the same way:
+If the preferred browser connector isn't available but another tool can drive
+the user's logged-in browser, use it the same way:
 
 1. Open the profile URL, wait a few seconds for it to render.
 2. Read the page text.
@@ -63,7 +70,7 @@ If every method returns only an authwall, tell the user plainly which methods we
 
 ## Writing linkedin_summary.md
 
-Save to `linkedin_summary.md` in the **project root** (the directory containing `CLAUDE.md` / `AGENTS.md`). If the file already exists, overwrite it — it is a refreshable snapshot.
+Save to `linkedin_summary.md` in the **current project or workspace root**. If the file already exists, overwrite it — it is a refreshable snapshot.
 
 Use this structure:
 

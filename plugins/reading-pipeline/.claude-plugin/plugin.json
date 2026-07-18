@@ -1,5 +1,5 @@
 {
   "name": "reading-pipeline",
   "description": "Research topics, summarize papers, convert documents to EPUB/KEPUB, and send them to a Kobo or reMarkable via Google Drive.",
-  "version": "0.5.0"
+  "version": "0.6.0"
 }

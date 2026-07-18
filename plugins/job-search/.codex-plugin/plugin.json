@@ -1,0 +1,27 @@
+{
+  "name": "job-search",
+  "version": "0.2.0",
+  "description": "Find matching jobs, capture postings, save LinkedIn profile snapshots, and tailor resumes to specific roles.",
+  "author": {
+    "name": "Shane Orr",
+    "url": "https://github.com/shanejorr"
+  },
+  "repository": "https://github.com/shanejorr/ai-plugins",
+  "keywords": ["jobs", "career", "resume", "linkedin", "job-search"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Job Search",
+    "shortDescription": "Find roles and tailor your application",
+    "longDescription": "Search for open roles that match your preferences, capture job descriptions as structured Markdown, save LinkedIn profile snapshots, and get grounded resume-tailoring recommendations.",
+    "developerName": "Shane Orr",
+    "category": "Productivity",
+    "capabilities": ["Read", "Write", "Web Search"],
+    "websiteURL": "https://github.com/shanejorr/ai-plugins",
+    "defaultPrompt": [
+      "Find open roles that match my job preferences.",
+      "Capture this job posting as Markdown.",
+      "Recommend how to tailor my resume for this role."
+    ],
+    "brandColor": "#2563EB"
+  }
+}

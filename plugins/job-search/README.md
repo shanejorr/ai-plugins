@@ -1,15 +1,27 @@
 # job-search
 
-A Claude Code plugin for running a job search out of a project folder: find
-open roles matching your preferences, capture postings as markdown, keep a
-LinkedIn snapshot fresh, and get resume-tailoring recommendations.
+A Claude Code, ChatGPT Work, and Codex plugin for running a job search out of a
+project folder: find open roles matching your preferences, capture postings as
+Markdown, keep a LinkedIn snapshot fresh, and get resume-tailoring
+recommendations.
 
-## Install
+## Install for Claude Code
 
 ```
 /plugin marketplace add shanejorr/ai-plugins
 /plugin install job-search@shanejorr-plugins
 ```
+
+## Install for ChatGPT Work and Codex
+
+```bash
+codex plugin marketplace add shanejorr/ai-plugins
+codex plugin add job-search@shanejorr-plugins
+```
+
+Restart ChatGPT or Codex and begin a new task so the installed skills are
+loaded. In ChatGPT desktop, the plugin can also be installed from **Plugins**
+in Work or Codex after the marketplace is registered.
 
 ## Skills
 
@@ -20,8 +32,10 @@ LinkedIn snapshot fresh, and get resume-tailoring recommendations.
 | `update-resume` | Compares your resume against a captured job description and prints concrete tailoring recommendations (never edits the resume) |
 | `scrape-linkedin` | Scrapes a LinkedIn profile by username and saves a structured snapshot to `linkedin_summary.md` |
 
-A typical loop: `/job-search` → `/capture-job-description <url>` for the
-interesting ones → `/update-resume job_descriptions/<slug>.md resume.md`.
+A typical loop is to ask the assistant to find matching jobs, capture the most
+interesting posting from its URL, and then recommend resume changes for that
+captured role. In Claude Code, the corresponding slash commands are
+`/job-search`, `/capture-job-description`, and `/update-resume`.
 
 ## Customize it to your search
 
@@ -45,10 +59,9 @@ directly; they're plain markdown instructions.
 
 ## Requirements
 
-- Web search + fetch tools (Tavily MCP preferred; built-in WebSearch/WebFetch
-  work too).
-- Optional: the Claude in Chrome extension makes `scrape-linkedin` far more
-  reliable (it uses your logged-in browser to get past LinkedIn's authwall)
-  and helps `capture-job-description` with JavaScript-heavy postings.
+- Web search and page-fetching tools.
+- Optional: a browser connector that can use your logged-in Chrome session
+  makes `scrape-linkedin` far more reliable (it can get past LinkedIn's
+  authwall) and helps `capture-job-description` with JavaScript-heavy postings.
 - Optional: Playwright (`npm install playwright && npx playwright install
   chromium`) enables the headless fallback for `scrape-linkedin`.

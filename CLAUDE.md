@@ -1,13 +1,13 @@
 # ai-plugins
 
-A personal Claude Code plugin marketplace hosted on GitHub. Plugins here are built for Shane's own productivity and automation needs, but the marketplace is public so others can install them too. `reading-pipeline` is additionally packaged for ChatGPT Work and Codex.
+A personal Claude Code plugin marketplace hosted on GitHub. Plugins here are built for Shane's own productivity and automation needs, but the marketplace is public so others can install them too. `reading-pipeline` and `job-search` are additionally packaged for ChatGPT Work and Codex.
 
 `AGENTS.md` is a symlink to this file so Claude Code and Codex share the same repository instructions. Edit `CLAUDE.md`; do not replace the symlink with a separate copy.
 
 ## Repo layout
 
 - `.claude-plugin/marketplace.json` — marketplace manifest. Every published plugin must have an entry here (`name`, `source`, `description`, `version`).
-- `.agents/plugins/marketplace.json` — ChatGPT/Codex marketplace manifest. It currently publishes only `reading-pipeline`.
+- `.agents/plugins/marketplace.json` — ChatGPT/Codex marketplace manifest. It currently publishes `reading-pipeline` and `job-search`.
 - `plugins/<plugin-name>/` — one directory per plugin.
   - `.claude-plugin/plugin.json` — plugin manifest.
   - `.codex-plugin/plugin.json` — Codex manifest, present only for plugins explicitly supporting ChatGPT/Codex.
@@ -33,11 +33,12 @@ A personal Claude Code plugin marketplace hosted on GitHub. Plugins here are bui
 /plugin install <plugin-name>@shanejorr-plugins
 ```
 
-### ChatGPT Work and Codex (`reading-pipeline` only)
+### ChatGPT Work and Codex (`reading-pipeline` and `job-search`)
 
 ```bash
 codex plugin marketplace add shanejorr/ai-plugins
 codex plugin add reading-pipeline@shanejorr-plugins
+codex plugin add job-search@shanejorr-plugins
 ```
 
 Restart ChatGPT or Codex and start a new task after installation so the plugin skills are loaded.

@@ -42,12 +42,12 @@ runs are automatic.
 
 ## Step 1 — Search across all four source types
 
-Use a web search tool for queries and a fetch/extract tool (e.g. Tavily
-`tavily_extract` or `WebFetch`) to open promising listings. If a board is
-JavaScript-heavy and a fetch returns an empty shell, use browser tools (e.g.
-Claude-in-Chrome) instead. Run several queries per source type; don't rely on
-one search. Adapt the board list to the user's sector — the mission-driven
-boards below only apply when the user targets that sector.
+Use an available web search tool for queries and a page-fetching or extraction
+tool to open promising listings. If a board is JavaScript-heavy and a fetch
+returns an empty shell, use an available browser-control tool to read the
+rendered page. Run several queries per source type; don't rely on one search.
+Adapt the board list to the user's sector — the mission-driven boards below
+only apply when the user targets that sector.
 
 **1. Nonprofit / mission boards** (when the user targets mission-driven work)
 - Idealist (idealist.org)

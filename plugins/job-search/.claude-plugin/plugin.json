@@ -1,5 +1,5 @@
 {
   "name": "job-search",
   "description": "Job-search toolkit: search the web for roles matching your preferences, capture job postings to markdown, scrape LinkedIn profiles, and get resume-tailoring recommendations.",
-  "version": "0.1.0"
+  "version": "0.2.0"
 }
