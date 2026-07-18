@@ -13,18 +13,6 @@
       "description": "Research topics, summarize papers, convert to EPUB/KEPUB, and sync to Kobo or reMarkable via Google Drive.",
       "version": "0.6.0"
     },
-{
-      "name": "claude-prompt-best-practices",
-      "source": "./plugins/claude-prompt-best-practices",
-      "description": "Reference guide for writing effective prompts for Claude. Bundles the official Anthropic prompt engineering documentation as a skill.",
-      "version": "0.2.0"
-    },
-    {
-      "name": "ui-style",
-      "source": "./plugins/ui-style",
-      "description": "Shane's house UI style guide: editorial civic-warm aesthetic for parent/civic-facing web products. User-invoked skill.",
-      "version": "0.1.0"
-    },
     {
       "name": "english-survival-lessons",
       "source": "./plugins/english-survival-lessons",
