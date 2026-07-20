@@ -24,6 +24,11 @@ A personal Claude Code plugin marketplace hosted on GitHub. Plugins here are bui
 - No strict conventions on naming, structure, or versioning beyond what the Claude Code plugin spec requires — match whatever style fits the plugin.
 - Bumping a plugin's `version` in its `plugin.json` should also update the version in `marketplace.json`.
 
+## Git workflow
+
+- All commits go to `main`. Commit and push directly to `main` — no pull requests.
+- Never create a branch unless explicitly told to.
+
 ## Install (for users)
 
 ### Claude Code
