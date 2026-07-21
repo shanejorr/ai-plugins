@@ -30,7 +30,10 @@ Determine whether the input is Markdown/text or a PDF. Check the file extension.
 
 ## Step 2A: If Input is Markdown or Plain Text — Convert Directly
 
-Install dependencies if needed:
+The converter auto-installs its dependencies (`ebooklib`, `markdown`) into
+whichever Python runs it, so no manual install is normally needed. To
+pre-install, or if you set `READING_PIPELINE_NO_AUTO_INSTALL=1` to disable
+auto-install:
 
 ```bash
 pip install ebooklib markdown --break-system-packages

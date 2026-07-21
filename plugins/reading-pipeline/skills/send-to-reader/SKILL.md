@@ -39,7 +39,10 @@ If the input is `.txt` or `.md`, convert it to the device-appropriate e-book for
 - **Kobo** → `.kepub.epub` (unlocks Kobo reading stats, annotations, and improved typography)
 - **reMarkable** → `.epub`
 
-Install dependencies once:
+The converter auto-installs its dependencies (`ebooklib`, `markdown`) into
+whichever Python runs it, so no manual install is normally needed. To
+pre-install, or if you set `READING_PIPELINE_NO_AUTO_INSTALL=1` to disable
+auto-install:
 
 ```bash
 pip install ebooklib markdown --break-system-packages
@@ -64,7 +67,11 @@ Then use the converted file as the upload target in Step 4.
 
 ## Step 4: Upload via Google Drive API
 
-Install dependencies once:
+The upload script auto-installs its Google API dependencies into whichever
+Python runs it (keyed to `sys.executable`, so the install and the run can
+never target different interpreters). No manual install is normally needed.
+To pre-install, or if you set `READING_PIPELINE_NO_AUTO_INSTALL=1` to disable
+auto-install:
 
 ```bash
 pip install google-api-python-client google-auth-httplib2 google-auth-oauthlib --break-system-packages

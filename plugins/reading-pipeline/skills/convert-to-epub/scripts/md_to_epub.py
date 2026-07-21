@@ -43,17 +43,83 @@ import sys
 import tempfile
 import uuid
 
-try:
-    from ebooklib import epub
-except ImportError:
-    print("ERROR: ebooklib not installed. Run: pip install ebooklib --break-system-packages")
+def _ensure_packages(required, marker):
+    """Guarantee `required` is importable by THIS interpreter.
+
+    `required` maps import name -> pip package name. The skill can be launched
+    by whatever `python3` happens to be first on PATH (conda, Homebrew, the
+    system Python, ...), and only some of those interpreters may have the
+    dependencies installed. Rather than fail when the "wrong" interpreter runs
+    us, install the missing packages into `sys.executable` -- the interpreter
+    actually executing this script -- and re-exec. Because the install and the
+    run always target the same interpreter, they can never diverge, which is
+    exactly the failure mode this guards against.
+
+    Set READING_PIPELINE_NO_AUTO_INSTALL=1 to disable auto-install and get a
+    manual instruction instead. `marker` is an env var used to break a
+    potential re-exec loop if an install "succeeds" but the import still fails.
+    """
+    import importlib.util
+
+    def _missing(name):
+        try:
+            return importlib.util.find_spec(name) is None
+        except (ImportError, ValueError):
+            return True
+
+    missing = [imp for imp in required if _missing(imp)]
+    if not missing:
+        return
+    pkgs = sorted({required[imp] for imp in missing})
+    manual = " ".join([sys.executable, "-m", "pip", "install", *pkgs])
+
+    if os.environ.get("READING_PIPELINE_NO_AUTO_INSTALL") == "1":
+        sys.stderr.write(
+            "ERROR: missing packages: %s\n"
+            "Auto-install is disabled (READING_PIPELINE_NO_AUTO_INSTALL=1). "
+            "Install them manually:\n  %s\n" % (", ".join(pkgs), manual)
+        )
+        sys.exit(1)
+    if os.environ.get(marker) == "1":
+        sys.stderr.write(
+            "ERROR: packages still missing after an install attempt: %s\n"
+            "Install them manually with the interpreter running this script:\n"
+            "  %s\n" % (", ".join(pkgs), manual)
+        )
+        sys.exit(1)
+
+    sys.stderr.write(
+        "[reading-pipeline] installing missing packages into %s: %s\n"
+        % (sys.executable, ", ".join(pkgs))
+    )
+    for extra in ([], ["--break-system-packages"], ["--user"],
+                  ["--user", "--break-system-packages"]):
+        try:
+            subprocess.check_call(
+                [sys.executable, "-m", "pip", "install", "-q", *extra, *pkgs]
+            )
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            continue
+        os.execve(
+            sys.executable,
+            [sys.executable, os.path.abspath(__file__), *sys.argv[1:]],
+            dict(os.environ, **{marker: "1"}),
+        )
+
+    sys.stderr.write(
+        "ERROR: could not auto-install required packages. Run manually:\n  %s\n"
+        % manual
+    )
     sys.exit(1)
 
-try:
-    import markdown
-except ImportError:
-    print("ERROR: markdown not installed. Run: pip install markdown --break-system-packages")
-    sys.exit(1)
+
+_ensure_packages(
+    {"ebooklib": "ebooklib", "markdown": "markdown"},
+    "_CONVERT_TO_EPUB_BOOTSTRAPPED",
+)
+
+from ebooklib import epub
+import markdown
 
 
 # Fence language tag -> Kroki diagram type. Used by the `kroki` backend to route
