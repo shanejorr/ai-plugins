@@ -32,6 +32,16 @@ Backends (``--diagram-backend``):
 
 A diagram that cannot be rendered is left untouched as its original fenced code
 block, so nothing is ever lost.
+
+Images
+------
+Every image the Markdown links to (``![alt](path)`` or raw ``<img>``) is copied
+into the book. Local paths resolve relative to the Markdown file; ``data:`` URIs
+are decoded; http(s) images are downloaded unless ``--no-remote-images`` is set.
+Images are normalized so both Kobo and reMarkable display them: WebP, SVG, TIFF,
+CMYK, and progressive-JPEG sources are re-encoded to PNG/JPEG, transparency is
+flattened onto white, and anything larger than ``--max-image-size`` is scaled
+down. An image that cannot be loaded becomes a short text placeholder.
 """
 
 import argparse
@@ -114,12 +124,28 @@ def _ensure_packages(required, marker):
 
 
 _ensure_packages(
-    {"ebooklib": "ebooklib", "markdown": "markdown"},
+    {"ebooklib": "ebooklib", "markdown": "markdown", "PIL": "Pillow"},
     "_CONVERT_TO_EPUB_BOOTSTRAPPED",
 )
 
 from ebooklib import epub
 import markdown
+from PIL import Image
+
+
+# Image formats every target reader displays reliably. Kobo's EPUB renderer
+# (Adobe RMSDK) and reMarkable both handle baseline JPEG, PNG, and GIF; WebP,
+# AVIF, TIFF, BMP, CMYK JPEGs, and progressive JPEGs are hit-or-miss, so those
+# are re-encoded.
+SAFE_IMAGE_FORMATS = {
+    "JPEG": ("jpg", "image/jpeg"),
+    "PNG": ("png", "image/png"),
+    "GIF": ("gif", "image/gif"),
+}
+
+IMG_TAG_RE = re.compile(r"<img\b[^>]*>", re.IGNORECASE)
+IMG_SRC_RE = re.compile(r"""\bsrc\s*=\s*(["'])(.*?)\1""", re.IGNORECASE | re.DOTALL)
+IMG_ALT_RE = re.compile(r"""\balt\s*=\s*(["'])(.*?)\1""", re.IGNORECASE | re.DOTALL)
 
 
 # Fence language tag -> Kroki diagram type. Used by the `kroki` backend to route
@@ -334,6 +360,189 @@ def embed_diagrams(
     return new_md, token_to_html
 
 
+class ImageEmbedder:
+    """Copy every image an ``<img>`` tag references into the book.
+
+    Sources can be local paths (resolved relative to the Markdown file),
+    ``file://`` URLs, ``data:`` URIs, or ``http(s)`` URLs (downloaded unless
+    remote fetching is disabled). Each image is normalized for e-ink and color
+    e-readers: unsafe formats are re-encoded to PNG/JPEG, transparency is
+    flattened onto white (transparent pixels vanish in dark mode and render
+    unpredictably on reMarkable), and oversized images are scaled down.
+
+    An image that cannot be loaded is replaced with a short text placeholder so
+    the book stays valid and the reader knows something was there.
+    """
+
+    def __init__(self, book, base_dir: str, fetch_remote: bool, max_size: int):
+        self.book = book
+        self.base_dir = base_dir
+        self.fetch_remote = fetch_remote
+        self.max_size = max_size
+        self.cache: dict[str, str | None] = {}
+        self.embedded = 0
+        self.converted = 0
+        self.failed: list[str] = []
+
+    def rewrite(self, html: str) -> str:
+        return IMG_TAG_RE.sub(self._replace_tag, html)
+
+    def _replace_tag(self, match: "re.Match[str]") -> str:
+        tag = match.group(0)
+        src_match = IMG_SRC_RE.search(tag)
+        if not src_match or not src_match.group(2).strip():
+            return tag
+        src = src_match.group(2).strip()
+
+        if src not in self.cache:
+            self.cache[src] = self._embed(src)
+        file_name = self.cache[src]
+
+        if file_name is None:
+            alt_match = IMG_ALT_RE.search(tag)
+            label = (alt_match.group(2).strip() if alt_match else "") or src
+            return f'<em class="missing-image">[Image unavailable: {label}]</em>'
+        return tag[: src_match.start(2)] + file_name + tag[src_match.end(2):]
+
+    def _embed(self, src: str) -> str | None:
+        data = self._load(src)
+        if data is None:
+            self.failed.append(src)
+            return None
+        normalized = self._normalize(data, src)
+        if normalized is None:
+            self.failed.append(src)
+            return None
+        content, ext, media_type = normalized
+
+        self.embedded += 1
+        file_name = f"images/img_{self.embedded:03d}.{ext}"
+        self.book.add_item(
+            epub.EpubImage(
+                uid=f"img_{self.embedded:03d}",
+                file_name=file_name,
+                media_type=media_type,
+                content=content,
+            )
+        )
+        return file_name
+
+    def _load(self, src: str) -> bytes | None:
+        import base64
+        import html
+        import urllib.parse
+        import urllib.request
+
+        src = html.unescape(src)
+        if src.startswith("data:"):
+            header, _, payload = src.partition(",")
+            try:
+                if header.endswith(";base64"):
+                    return base64.b64decode(payload)
+                return urllib.parse.unquote_to_bytes(payload)
+            except ValueError:
+                return None
+
+        if re.match(r"https?://", src, re.IGNORECASE):
+            if not self.fetch_remote:
+                return None
+            req = urllib.request.Request(src, headers={"User-Agent": "Mozilla/5.0"})
+            try:
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    return resp.read()
+            except Exception as e:  # network errors, HTTP errors, bad URLs
+                sys.stderr.write(f"  ! could not download image {src}: {e}\n")
+                return None
+
+        if src.lower().startswith("file://"):
+            path = urllib.parse.unquote(urllib.parse.urlparse(src).path)
+        else:
+            path = urllib.parse.unquote(re.split(r"[?#]", src, maxsplit=1)[0])
+        path = os.path.expanduser(path)
+        if not os.path.isabs(path):
+            path = os.path.join(self.base_dir, path)
+        try:
+            with open(path, "rb") as f:
+                return f.read()
+        except OSError:
+            return None
+
+    def _rasterize_svg(self, data: bytes) -> bytes | None:
+        """Render SVG to PNG with rsvg-convert or ImageMagick, if installed."""
+        tool = shutil.which("rsvg-convert")
+        if tool:
+            cmd = [tool, "-f", "png", "-b", "white", "-z", "2"]
+        elif shutil.which("magick"):
+            cmd = ["magick", "-background", "white", "-density", "192", "svg:-", "png:-"]
+        else:
+            return None
+        try:
+            result = subprocess.run(cmd, input=data, capture_output=True, check=True, timeout=60)
+        except (subprocess.CalledProcessError, subprocess.TimeoutExpired, OSError):
+            return None
+        return result.stdout or None
+
+    def _normalize(self, data: bytes, src: str) -> tuple[bytes, str, str] | None:
+        import io
+
+        head = data[:512].lstrip().lower()
+        if head.startswith(b"<svg") or (head.startswith(b"<?xml") and b"<svg" in data[:2048].lower()):
+            png = self._rasterize_svg(data)
+            if png is None:
+                # Kobo shows SVG; reMarkable may not. Keep it rather than drop it.
+                sys.stderr.write(
+                    f"  ! no SVG rasterizer (rsvg-convert or magick) found; embedding {src} "
+                    "as SVG, which some readers (e.g. reMarkable) may not display\n"
+                )
+                return data, "svg", "image/svg+xml"
+            data = png
+
+        try:
+            img = Image.open(io.BytesIO(data))
+            img.load()
+        except Exception:
+            sys.stderr.write(f"  ! not a readable image: {src}\n")
+            return None
+
+        fmt = img.format
+        has_alpha = img.mode in ("RGBA", "LA", "PA") or (
+            img.mode == "P" and "transparency" in img.info
+        )
+        oversized = max(img.size) > self.max_size
+        animated = getattr(img, "n_frames", 1) > 1
+        progressive = fmt == "JPEG" and (
+            img.info.get("progressive") or img.info.get("progression")
+        )
+        odd_mode = img.mode not in ("RGB", "L", "P", "RGBA", "LA", "PA", "1")
+
+        if fmt in SAFE_IMAGE_FORMATS and not (
+            has_alpha or oversized or animated or progressive or odd_mode
+        ):
+            ext, media_type = SAFE_IMAGE_FORMATS[fmt]
+            return data, ext, media_type
+
+        # Re-encode. E-readers do not animate, so keep the first frame only.
+        self.converted += 1
+        img.seek(0)
+        if has_alpha:
+            rgba = img.convert("RGBA")
+            flat = Image.new("RGB", rgba.size, "white")
+            flat.paste(rgba, mask=rgba.getchannel("A"))
+            img = flat
+        elif img.mode not in ("RGB", "L"):
+            img = img.convert("RGB")
+        if oversized:
+            img.thumbnail((self.max_size, self.max_size), Image.LANCZOS)
+
+        out = io.BytesIO()
+        if fmt == "JPEG":
+            # Photos stay JPEG (baseline, so older Kobo firmware shows them).
+            img.save(out, format="JPEG", quality=90, optimize=True, progressive=False)
+            return out.getvalue(), "jpg", "image/jpeg"
+        img.save(out, format="PNG", optimize=True)
+        return out.getvalue(), "png", "image/png"
+
+
 def resolve_output_path(output_path: str, fmt: str | None) -> str:
     """Decide on the final output path based on extension and --format flag."""
     if fmt == "kepub":
@@ -364,6 +573,8 @@ def create_epub(
     mermaid_theme: str = "default",
     diagram_background: str = "white",
     diagram_scale: int = 2,
+    fetch_remote_images: bool = True,
+    max_image_size: int = 1600,
 ):
     """Create an EPUB or KEPUB from a markdown file."""
     with open(md_path, "r", encoding="utf-8") as f:
@@ -404,6 +615,15 @@ def create_epub(
         scale=diagram_scale,
     )
 
+    # Linked images are resolved relative to the Markdown file and copied into
+    # the book; without this the EPUB would hold dangling <img> references.
+    images = ImageEmbedder(
+        book,
+        base_dir=os.path.dirname(os.path.abspath(md_path)),
+        fetch_remote=fetch_remote_images,
+        max_size=max_image_size,
+    )
+
     # CSS for clean e-reader formatting
     css = epub.EpubItem(
         uid="style",
@@ -428,7 +648,8 @@ hr { border: none; border-top: 1px solid #ccc; margin: 1.5em 0; }
 p { margin: 0.5em 0; }
 dl dt { font-weight: bold; margin-top: 0.5em; }
 dl dd { margin-left: 1.5em; margin-bottom: 0.5em; }
-img { max-width: 100%; height: auto; }
+img { max-width: 100%; height: auto; page-break-inside: avoid; }
+.missing-image { color: #777; font-size: 0.9em; }
 figure { margin: 1em 0; text-align: center; }
 figure.diagram { page-break-inside: avoid; }
 figure.diagram img { max-width: 100%; }
@@ -456,7 +677,7 @@ figcaption { font-size: 0.85em; color: #555; margin-top: 0.3em; }
         else:
             section_title = f"Section {i}"
 
-        html_content = md_to_html(section)
+        html_content = images.rewrite(md_to_html(section))
 
         # Swap diagram placeholders back in for the rendered <figure> images.
         for token, figure_html in diagram_tokens.items():
@@ -492,6 +713,18 @@ figcaption { font-size: 0.85em; color: #555; margin-top: 0.3em; }
     book.add_item(epub.EpubNcx())
     book.add_item(epub.EpubNav())
     book.spine = ["nav"] + chapters
+
+    if images.embedded:
+        print(
+            f"Embedded {images.embedded} image(s)"
+            + (f" ({images.converted} converted for e-reader compatibility)." if images.converted else ".")
+        )
+    if images.failed:
+        print(f"WARNING: {len(images.failed)} image(s) could not be embedded and were replaced with a placeholder:")
+        for src in images.failed[:10]:
+            print(f"  - {src}")
+        if len(images.failed) > 10:
+            print(f"  ... and {len(images.failed) - 10} more")
 
     output_path = resolve_output_path(output_path, fmt)
     epub.write_epub(output_path, book, {})
@@ -551,6 +784,19 @@ def main():
         help="PNG scale factor for local mmdc rendering; higher is crisper "
         "(default: 2).",
     )
+    parser.add_argument(
+        "--no-remote-images",
+        action="store_true",
+        help="Do not download http(s) images; replace them with a text placeholder. "
+        "Local and data: URI images are always embedded.",
+    )
+    parser.add_argument(
+        "--max-image-size",
+        type=int,
+        default=1600,
+        help="Scale images so their longest side is at most this many pixels "
+        "(default: 1600, close to Kobo Color and reMarkable Paper Pro screens).",
+    )
     args = parser.parse_args()
 
     if not os.path.exists(args.input):
@@ -569,6 +815,8 @@ def main():
         mermaid_theme=args.mermaid_theme,
         diagram_background=args.diagram_background,
         diagram_scale=args.diagram_scale,
+        fetch_remote_images=not args.no_remote_images,
+        max_image_size=args.max_image_size,
     )
 
 

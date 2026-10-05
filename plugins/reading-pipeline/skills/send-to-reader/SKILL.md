@@ -45,7 +45,7 @@ pre-install, or if you set `READING_PIPELINE_NO_AUTO_INSTALL=1` to disable
 auto-install:
 
 ```bash
-pip install ebooklib markdown --break-system-packages
+pip install ebooklib markdown Pillow --break-system-packages
 ```
 
 Run the bundled converter from the sibling `convert-to-epub` skill. The output path's extension drives the format (`.kepub.epub` → KEPUB, `.epub` → EPUB):
@@ -59,6 +59,7 @@ python <plugin-root>/skills/convert-to-epub/scripts/md_to_epub.py <input.txt|inp
 ```
 
 Notes:
+- **Images:** the converter embeds every image the Markdown links to and converts it to a format the chosen device displays, for both Kobo and reMarkable. Pass the original `.md` path (not a copy in another folder) so relative image paths resolve. If the script prints `could not be embedded` warnings, tell the user which images are missing.
 - Derive `<basename>` as a snake_case version of the input filename, under ~60 chars.
 - The script auto-detects the title from the first `# Heading` and the author from a `**Author(s):**` line. Override with `--title` / `--author` only if the user asks.
 - For `.pdf`/`.epub`/`.kepub.epub` inputs, skip this step entirely.

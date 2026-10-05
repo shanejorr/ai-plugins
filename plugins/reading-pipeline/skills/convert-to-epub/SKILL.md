@@ -30,13 +30,13 @@ Determine whether the input is Markdown/text or a PDF. Check the file extension.
 
 ## Step 2A: If Input is Markdown or Plain Text — Convert Directly
 
-The converter auto-installs its dependencies (`ebooklib`, `markdown`) into
+The converter auto-installs its dependencies (`ebooklib`, `markdown`, `Pillow`) into
 whichever Python runs it, so no manual install is normally needed. To
 pre-install, or if you set `READING_PIPELINE_NO_AUTO_INSTALL=1` to disable
 auto-install:
 
 ```bash
-pip install ebooklib markdown --break-system-packages
+pip install ebooklib markdown Pillow --break-system-packages
 ```
 
 Optional — to render Mermaid diagrams to images (see [Diagrams](#diagrams-mermaid-and-similar)), also install the Mermaid CLI:
@@ -56,6 +56,7 @@ Behavior:
 - Override with `--title "..."` and `--author "..."`.
 - Output format is inferred from the output filename. If the filename ends in `.kepub.epub`, KEPUB is produced; if `.epub`, plain EPUB. **If neither, the script defaults to KEPUB**, so to get a default EPUB you must either pass an `.epub` filename or pass `--format epub`.
 - Force a format with `--format epub` or `--format kepub`.
+- **Linked images are embedded automatically** and converted to formats both Kobo and reMarkable display. Run the script on the Markdown file *where it sits*, so relative image paths resolve. See [Images](#images) below.
 - **Mermaid (and similar) diagrams are rendered to images and embedded automatically** — the reader sees the picture, not the diagram source. See [Diagrams](#diagrams-mermaid-and-similar) below.
 
 Examples:
@@ -71,6 +72,24 @@ python scripts/md_to_epub.py summary_paper.md ./summary_paper.kepub.epub
 python scripts/md_to_epub.py notes.md ./notes.epub --format epub \
     --title "Field Notes from Patagonia" --author "Shane Orr"
 ```
+
+## Images
+
+Every image the Markdown references — `![alt](path)`, reference-style images, or raw `<img>` tags — is copied into the EPUB, so it renders offline on the device.
+
+- **Local paths** resolve relative to the Markdown file's folder (URL-encoded paths like `my%20images/fig.png` and `file://` URLs work too). **Do not copy the `.md` to another folder (e.g. `/tmp`) before converting** unless you copy its image folder with it, or the relative paths break.
+- **`data:` URIs** are decoded and embedded.
+- **`http(s)` images** are downloaded. Pass `--no-remote-images` to skip downloading; those images become placeholders.
+
+Each image is normalized so both target readers show it:
+
+- Baseline JPEG, PNG, and GIF pass through unchanged when no other fix is needed.
+- WebP, AVIF, TIFF, BMP, CMYK JPEGs, and progressive JPEGs are re-encoded (PNG, or baseline JPEG for JPEG sources). reMarkable and Kobo's Adobe renderer don't reliably display those.
+- SVG is rasterized to PNG with `rsvg-convert` (`brew install librsvg`) or ImageMagick if available; otherwise it is embedded as SVG with a warning, since reMarkable may not show it.
+- Transparency is flattened onto white, so images stay visible in dark mode and on e-ink.
+- Images larger than `--max-image-size` pixels on their longest side (default `1600`) are scaled down to save space.
+
+An image that can't be found or read is replaced by an italic `[Image unavailable: <alt text>]` placeholder, and the script lists each one. Report those to the user.
 
 ## Diagrams (Mermaid and similar)
 
@@ -142,6 +161,6 @@ Save the output to the user's current working directory by default; honor a user
 
 - Equations: not preserved. LaTeX in source Markdown will pass through as raw text. For papers with heavy math, warn the user.
 - Diagrams: Mermaid fenced code blocks are rendered to embedded images (PlantUML, GraphViz, and others too via `--diagram-backend kroki`). This needs `mmdc` (local) or a Kroki server; without either, diagrams stay as code blocks. Only fenced-code diagrams are handled — image figures embedded in a PDF are not extracted (see below).
-- Figures: not extracted from PDFs. Only text is converted.
+- Figures: not extracted from PDFs. Only text is converted. (Images linked from Markdown input are embedded — see [Images](#images).)
 - Footnotes from PDFs: usually appear inline as artifacts; clean them up during the PDF→Markdown step.
 - Code blocks: rendered with monospace styling but no syntax highlighting.
